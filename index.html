@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Quotes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .quote-container {
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .quote-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .quote-text {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        .quote-author {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in 0.3s forwards;
+        }
+
+        .last-updated {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-top: 20px;
+        }
+
+        .loading {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .updating {
+            animation: pulse 1s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .quote-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quote-container">
+        <h1>✨ Live Quotes ✨</h1>
+        <div class="last-updated" id="lastUpdated">Loading...</div>
+        <blockquote class="quote-text" id="quoteText">Loading your inspiration...</blockquote>
+        <div class="quote-author" id="quoteAuthor">— Please wait</div>
+        <div class="timer" id="timer">Next update in: 60s</div>
+    </div>
+
+    <script>
+        const quotes = [
+            "The only way to do great work is to love what you do. — Steve Jobs",
+            "Life is what happens to you while you're busy making other plans. — John Lennon",
+            "The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
+            "It is during our darkest moments that we must focus to see the light. — Aristotle",
+            "The way to get started is to quit talking and begin doing. — Walt Disney",
+            "Don't let yesterday take up too much of today. — Will Rogers",
+            "You learn more from failure than from success. Don't let it stop you. Failure builds character. — Unknown",
+            "It's not whether you get knocked down, it's whether you get up. — Vince Lombardi",
+            "If you are working on something that you really care about, you don't have to be pushed. The vision pulls you. — Steve Jobs",
+            "People who are crazy enough to think they can change the world, are the ones who do. — Rob Siltanen",
+            "The best time to plant a tree was 20 years ago. The second best time is now. — Chinese Proverb",
+            "Your limitation—it's only your imagination. — Unknown",
+            "Push yourself, because no one else is going to do it for you. — Unknown",
+            "Great things never come from comfort zones. — Unknown",
+            "Dream it. Wish it. Do it. — Unknown"
+        ];
+
+        let currentQuoteIndex = 0;
+        let countdown = 60;
+        let countdownInterval;
+
+        function getRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            return quotes[randomIndex];
+        }
+
+        function parseQuote(quoteLine) {
+            if (quoteLine.includes(' — ')) {
+                const parts = quoteLine.split(' — ');
+                return {
+                    text: parts[0],
+                    author: parts[1]
+                };
+            }
+            return {
+                text: quoteLine,
+                author: "Unknown"
+            };
+        }
+
+        function updateQuote() {
+            const container = document.querySelector('.quote-container');
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            // Add updating animation
+            container.classList.add('updating');
+
+            // Get new quote
+            const quoteLine = getRandomQuote();
+            const quote = parseQuote(quoteLine);
+
+            // Update content with fade effect
+            setTimeout(() => {
+                quoteText.textContent = `"${quote.text}"`;
+                quoteAuthor.textContent = `— ${quote.author}`;
+
+                const now = new Date();
+                const timeString = now.toLocaleString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                lastUpdated.textContent = `Updated: ${timeString}`;
+
+                // Remove updating animation
+                container.classList.remove('updating');
+
+                // Reset animations
+                quoteText.style.animation = 'none';
+                quoteAuthor.style.animation = 'none';
+                setTimeout(() => {
+                    quoteText.style.animation = 'fadeIn 1s ease-in forwards';
+                    quoteAuthor.style.animation = 'fadeIn 1s ease-in 0.3s forwards';
+                }, 10);
+
+                // Reset countdown
+                countdown = 60;
+            }, 300);
+        }
+
+        function updateTimer() {
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `Next update in: ${countdown}s`;
+
+            if (countdown <= 0) {
+                updateQuote();
+                countdown = 60;
+            } else {
+                countdown--;
+            }
+        }
+
+        function startTimer() {
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            updateQuote();
+            startTimer();
+        });
+
+        // Handle visibility change to pause/resume when tab is not active
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                clearInterval(countdownInterval);
+            } else {
+                startTimer();
+            }
+        });
+    </script>
+</body>
+
+</html>

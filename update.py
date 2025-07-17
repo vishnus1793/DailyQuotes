@@ -28,13 +28,13 @@ def update_daily_md():
         quote = quote_line
         author = "Unknown"
     
-    # Get current date
-    today = datetime.date.today().strftime("%B %d, %Y")
+    # Get current date and time
+    now = datetime.datetime.now().strftime("%B %d, %Y at %I:%M %p")
     
     # Create the content
-    content = f"""# Daily Quote
+    content = f"""# Current Quote
 
-*Updated: {today}*
+*Updated: {now}*
 
 ---
 
@@ -48,7 +48,7 @@ def update_daily_md():
     with open(daily_file, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    print(f"Updated daily.md with quote by {author}")
+    print(f"Updated daily.md with quote by {author} at {now}")
 
 if __name__ == "__main__":
     update_daily_md()

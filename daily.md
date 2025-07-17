@@ -1,6 +1,6 @@
-# Daily Quote
+# Current Quote
 
-*Updated: [Will be updated by script]*
+*Updated: [Will be updated every minute]*
 
 ---
 

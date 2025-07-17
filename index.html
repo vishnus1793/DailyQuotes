@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Quotes</title>
+    <title>Daily Quotes - Inspire Your Day</title>
     <style>
         * {
             margin: 0;
@@ -13,22 +12,78 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: white;
+            overflow-x: hidden;
         }
 
-        .quote-container {
-            max-width: 800px;
-            padding: 40px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
             text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
             background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Quote Display */
+        .quote-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.5s ease;
@@ -39,174 +94,473 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .quote-text {
             font-size: 1.8rem;
             line-height: 1.6;
             margin-bottom: 20px;
             font-style: italic;
-            opacity: 0;
             animation: fadeIn 1s ease-in forwards;
         }
 
         .quote-author {
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 30px;
-            opacity: 0;
+            margin-bottom: 20px;
             animation: fadeIn 1s ease-in 0.3s forwards;
         }
 
-        .last-updated {
+        .quote-category {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
             font-size: 0.9rem;
-            opacity: 0.8;
             margin-bottom: 20px;
         }
 
-        .timer {
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
             font-size: 1rem;
-            opacity: 0.7;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Search */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Quote Submission Form */
+        .submit-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Search Results */
+        .search-results {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quote-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .quote-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .quote-item-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .quote-item-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .quote-item-category {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Timer */
+        .timer {
+            text-align: center;
+            font-size: 1rem;
+            opacity: 0.8;
             margin-top: 20px;
         }
 
-        .loading {
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
-
+        /* Animations */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0.7;
-            }
-
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
 
         .updating {
             animation: pulse 1s infinite;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .quote-container {
-                margin: 20px;
-                padding: 30px 20px;
+            .container {
+                padding: 15px;
             }
-
-            h1 {
-                font-size: 2rem;
+            
+            .header h1 {
+                font-size: 2.5rem;
             }
-
+            
             .quote-text {
                 font-size: 1.4rem;
             }
+            
+            .quote-container {
+                padding: 25px;
+            }
+            
+            .nav-tabs {
+                justify-content: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .category-filter {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .quote-text {
+                font-size: 1.2rem;
+            }
+            
+            .quote-container {
+                padding: 20px;
+            }
+        }
+
+        /* Success/Error Messages */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+        }
+
+        .message.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid rgba(244, 67, 54, 0.5);
         }
     </style>
 </head>
-
 <body>
-    <div class="quote-container">
-        <h1>✨ Live Quotes ✨</h1>
-        <div class="last-updated" id="lastUpdated">Loading...</div>
-        <blockquote class="quote-text" id="quoteText">Loading your inspiration...</blockquote>
-        <div class="quote-author" id="quoteAuthor">— Please wait</div>
-        <div class="timer" id="timer">Next update in: 60s</div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✨ Daily Quotes ✨</h1>
+            <p>Inspire your day with wisdom from great minds</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('daily')">🏠 Daily Quote</button>
+            <button class="nav-tab" onclick="showSection('browse')">📚 Browse Quotes</button>
+            <button class="nav-tab" onclick="showSection('search')">🔍 Search</button>
+            <button class="nav-tab" onclick="showSection('submit')">✍️ Submit Quote</button>
+        </div>
+
+        <!-- Daily Quote Section -->
+        <div id="daily" class="content-section active">
+            <div class="quote-container">
+                <div class="quote-category" id="quoteCategory">motivational</div>
+                <blockquote class="quote-text" id="quoteText">Loading your daily inspiration...</blockquote>
+                <div class="quote-author" id="quoteAuthor">— Please wait</div>
+                <div class="timer" id="timer">Next update in: 60s</div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="getNewQuote()">🎲 New Quote</button>
+                <button class="btn" onclick="toggleAutoUpdate()">⏸️ Pause Auto</button>
+                <button class="btn" onclick="shareQuote()">📤 Share</button>
+                <button class="btn" onclick="favoriteQuote()">❤️ Favorite</button>
+            </div>
+        </div>
+
+        <!-- Browse Quotes Section -->
+        <div id="browse" class="content-section">
+            <div class="category-filter">
+                <button class="category-btn active" onclick="filterByCategory('all')">All</button>
+                <button class="category-btn" onclick="filterByCategory('motivational')">💪 Motivational</button>
+                <button class="category-btn" onclick="filterByCategory('life')">🌱 Life</button>
+                <button class="category-btn" onclick="filterByCategory('love')">❤️ Love</button>
+                <button class="category-btn" onclick="filterByCategory('humor')">😄 Humor</button>
+            </div>
+            
+            <div class="search-results" id="browseResults">
+                <!-- Quotes will be populated here -->
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div id="search" class="content-section">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="Search by author, keywords, or tags..." 
+                       onkeyup="performSearch()">
+            </div>
+            
+            <div class="search-results" id="searchResults">
+                <div style="text-align: center; opacity: 0.7; padding: 40px;">
+                    Start typing to search through our collection of quotes...
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Quote Section -->
+        <div id="submit" class="content-section">
+            <div class="submit-form">
+                <h2 style="text-align: center; margin-bottom: 30px;">Submit Your Favorite Quote</h2>
+                
+                <div id="submitMessage"></div>
+                
+                <form onsubmit="submitQuote(event)">
+                    <div class="form-group">
+                        <label for="quoteInput">Quote Text *</label>
+                        <textarea id="quoteInput" placeholder="Enter the quote text..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="authorInput">Author *</label>
+                        <input type="text" id="authorInput" placeholder="Author name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoryInput">Category</label>
+                        <select id="categoryInput">
+                            <option value="motivational">Motivational</option>
+                            <option value="life">Life</option>
+                            <option value="love">Love</option>
+                            <option value="humor">Humor</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="submitterName">Your Name (Optional)</label>
+                        <input type="text" id="submitterName" placeholder="Your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn" style="width: 100%;">📝 Submit Quote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Enhanced quotes database with categories
         const quotes = [
-            "The only way to do great work is to love what you do. — Steve Jobs",
-            "Life is what happens to you while you're busy making other plans. — John Lennon",
-            "The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
-            "It is during our darkest moments that we must focus to see the light. — Aristotle",
-            "The way to get started is to quit talking and begin doing. — Walt Disney",
-            "Don't let yesterday take up too much of today. — Will Rogers",
-            "You learn more from failure than from success. Don't let it stop you. Failure builds character. — Unknown",
-            "It's not whether you get knocked down, it's whether you get up. — Vince Lombardi",
-            "If you are working on something that you really care about, you don't have to be pushed. The vision pulls you. — Steve Jobs",
-            "People who are crazy enough to think they can change the world, are the ones who do. — Rob Siltanen",
-            "The best time to plant a tree was 20 years ago. The second best time is now. — Chinese Proverb",
-            "Your limitation—it's only your imagination. — Unknown",
-            "Push yourself, because no one else is going to do it for you. — Unknown",
-            "Great things never come from comfort zones. — Unknown",
-            "Dream it. Wish it. Do it. — Unknown"
+            {text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "motivational"},
+            {text: "Life is what happens to you while you're busy making other plans.", author: "John Lennon", category: "life"},
+            {text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "motivational"},
+            {text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "motivational"},
+            {text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "motivational"},
+            {text: "Don't let yesterday take up too much of today.", author: "Will Rogers", category: "life"},
+            {text: "You learn more from failure than from success. Don't let it stop you. Failure builds character.", author: "Unknown", category: "motivational"},
+            {text: "It's not whether you get knocked down, it's whether you get up.", author: "Vince Lombardi", category: "motivational"},
+            {text: "If you are working on something that you really care about, you don't have to be pushed. The vision pulls you.", author: "Steve Jobs", category: "motivational"},
+            {text: "People who are crazy enough to think they can change the world, are the ones who do.", author: "Rob Siltanen", category: "motivational"},
+            {text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "life"},
+            {text: "Your limitation—it's only your imagination.", author: "Unknown", category: "motivational"},
+            {text: "Push yourself, because no one else is going to do it for you.", author: "Unknown", category: "motivational"},
+            {text: "Great things never come from comfort zones.", author: "Unknown", category: "motivational"},
+            {text: "Dream it. Wish it. Do it.", author: "Unknown", category: "motivational"},
+            {text: "Love is not about how many days, months, or years you have been together. Love is about how much you love each other every single day.", author: "Unknown", category: "love"},
+            {text: "Laughter is timeless, imagination has no age, and dreams are forever.", author: "Walt Disney", category: "humor"},
+            {text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational"},
+            {text: "In the end, we will remember not the words of our enemies, but the silence of our friends.", author: "Martin Luther King Jr.", category: "life"},
+            {text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde", category: "humor"},
+            {text: "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.", author: "Albert Einstein", category: "humor"},
+            {text: "A room without books is like a body without a soul.", author: "Marcus Tullius Cicero", category: "life"},
+            {text: "You only live once, but if you do it right, once is enough.", author: "Mae West", category: "life"},
+            {text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "motivational"}
         ];
 
-        let currentQuoteIndex = 0;
+        let currentQuote = null;
         let countdown = 60;
         let countdownInterval;
+        let autoUpdateEnabled = true;
+        let currentCategory = 'all';
 
-        function getRandomQuote() {
-            const randomIndex = Math.floor(Math.random() * quotes.length);
-            return quotes[randomIndex];
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            getNewQuote();
+            startTimer();
+            populateBrowseSection();
+        });
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
         }
 
-        function parseQuote(quoteLine) {
-            if (quoteLine.includes(' — ')) {
-                const parts = quoteLine.split(' — ');
-                return {
-                    text: parts[0],
-                    author: parts[1]
-                };
+        // Quote Management
+        function getRandomQuote(category = 'all') {
+            let filteredQuotes = quotes;
+            if (category !== 'all') {
+                filteredQuotes = quotes.filter(q => q.category === category);
             }
-            return {
-                text: quoteLine,
-                author: "Unknown"
-            };
+            const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+            return filteredQuotes[randomIndex];
         }
 
-        function updateQuote() {
+        function getNewQuote() {
             const container = document.querySelector('.quote-container');
             const quoteText = document.getElementById('quoteText');
             const quoteAuthor = document.getElementById('quoteAuthor');
-            const lastUpdated = document.getElementById('lastUpdated');
+            const quoteCategory = document.getElementById('quoteCategory');
 
-            // Add updating animation
             container.classList.add('updating');
 
-            // Get new quote
-            const quoteLine = getRandomQuote();
-            const quote = parseQuote(quoteLine);
-
-            // Update content with fade effect
             setTimeout(() => {
-                quoteText.textContent = `"${quote.text}"`;
-                quoteAuthor.textContent = `— ${quote.author}`;
+                currentQuote = getRandomQuote();
+                
+                quoteText.textContent = `"${currentQuote.text}"`;
+                quoteAuthor.textContent = `— ${currentQuote.author}`;
+                quoteCategory.textContent = currentQuote.category;
 
-                const now = new Date();
-                const timeString = now.toLocaleString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                });
-                lastUpdated.textContent = `Updated: ${timeString}`;
-
-                // Remove updating animation
                 container.classList.remove('updating');
-
+                
                 // Reset animations
                 quoteText.style.animation = 'none';
                 quoteAuthor.style.animation = 'none';
@@ -215,20 +569,24 @@
                     quoteAuthor.style.animation = 'fadeIn 1s ease-in 0.3s forwards';
                 }, 10);
 
-                // Reset countdown
                 countdown = 60;
             }, 300);
         }
 
+        // Timer Management
         function updateTimer() {
             const timerElement = document.getElementById('timer');
-            timerElement.textContent = `Next update in: ${countdown}s`;
-
-            if (countdown <= 0) {
-                updateQuote();
-                countdown = 60;
+            if (autoUpdateEnabled) {
+                timerElement.textContent = `Next update in: ${countdown}s`;
+                
+                if (countdown <= 0) {
+                    getNewQuote();
+                    countdown = 60;
+                } else {
+                    countdown--;
+                }
             } else {
-                countdown--;
+                timerElement.textContent = 'Auto-update paused';
             }
         }
 
@@ -236,14 +594,132 @@
             countdownInterval = setInterval(updateTimer, 1000);
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function () {
-            updateQuote();
-            startTimer();
-        });
+        function toggleAutoUpdate() {
+            autoUpdateEnabled = !autoUpdateEnabled;
+            const btn = event.target;
+            btn.textContent = autoUpdateEnabled ? '⏸️ Pause Auto' : '▶️ Resume Auto';
+        }
+
+        // Category Filtering
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            populateBrowseSection();
+        }
+
+        function populateBrowseSection() {
+            const container = document.getElementById('browseResults');
+            let filteredQuotes = quotes;
+            
+            if (currentCategory !== 'all') {
+                filteredQuotes = quotes.filter(q => q.category === currentCategory);
+            }
+            
+            container.innerHTML = filteredQuotes.map(quote => `
+                <div class="quote-item">
+                    <div class="quote-item-text">"${quote.text}"</div>
+                    <div class="quote-item-author">— ${quote.author}</div>
+                    <div class="quote-item-category">#${quote.category}</div>
+                </div>
+            `).join('');
+        }
+
+        // Search Functionality
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (searchTerm.length < 2) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; opacity: 0.7; padding: 40px;">
+                        Start typing to search through our collection of quotes...
+                    </div>
+                `;
+                return;
+            }
+            
+            const filteredQuotes = quotes.filter(quote => 
+                quote.text.toLowerCase().includes(searchTerm) ||
+                quote.author.toLowerCase().includes(searchTerm) ||
+                quote.category.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filteredQuotes.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; opacity: 0.7; padding: 40px;">
+                        No quotes found matching "${searchTerm}"
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsContainer.innerHTML = filteredQuotes.map(quote => `
+                <div class="quote-item">
+                    <div class="quote-item-text">"${quote.text}"</div>
+                    <div class="quote-item-author">— ${quote.author}</div>
+                    <div class="quote-item-category">#${quote.category}</div>
+                </div>
+            `).join('');
+        }
+
+        // Quote Submission
+        function submitQuote(event) {
+            event.preventDefault();
+            
+            const quoteText = document.getElementById('quoteInput').value;
+            const author = document.getElementById('authorInput').value;
+            const category = document.getElementById('categoryInput').value;
+            const submitterName = document.getElementById('submitterName').value;
+            
+            // Simulate submission (in real app, this would send to server)
+            const messageDiv = document.getElementById('submitMessage');
+            messageDiv.innerHTML = `
+                <div class="message success">
+                    ✅ Thank you for your submission! Your quote has been received and will be reviewed before publishing.
+                </div>
+            `;
+            
+            // Clear form
+            document.querySelector('#submit form').reset();
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Social Features
+        function shareQuote() {
+            if (currentQuote) {
+                const text = `"${currentQuote.text}" — ${currentQuote.author}`;
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Daily Quote',
+                        text: text,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('Quote copied to clipboard!');
+                    });
+                }
+            }
+        }
+
+        function favoriteQuote() {
+            if (currentQuote) {
+                // Simulate adding to favorites (in real app, this would save to localStorage or server)
+                alert('Quote added to favorites! ❤️');
+            }
+        }
 
         // Handle visibility change to pause/resume when tab is not active
-        document.addEventListener('visibilitychange', function () {
+        document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 clearInterval(countdownInterval);
             } else {
@@ -252,5 +728,4 @@
         });
     </script>
 </body>
-
 </html>

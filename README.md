@@ -55,4 +55,4 @@ Simply add new quotes to `quotes.txt` in the format:
 Your quote here — Author Name
 ```
 
-Each quote should be on its own line.# DailyQuotes
+Each quote should be on its own line
